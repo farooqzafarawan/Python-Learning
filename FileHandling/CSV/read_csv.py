@@ -1,9 +1,10 @@
+#Read CSV file containing different fields delimited by comma
 import os
 import csv
 
 ## sample.csv
-# ID,MergeID,CustomerNo,FirstName,LastName,Email,Phone,Zip,City,State,Country,ShippingAddress,isActive
-# 1,0,2323651,Ferguson,Chen F.,Abcush9761@gmail.com,(716) 594 7675,33182,MIAMI,FL,US,123 JOFFRA DR,1
+# ID,CustID,Name,Email,Phone,Zip,City,State,Country,Address
+# 1,2323651,Ferguson,Abcush9761@gmail.com,(716) 594 7675,33182,MIAMI,FL,US,123 JOFFRA DR
 
 dirpath = r'D:\MISC'
 csvfile = os.path.join(dirpath,'sample.csv')
