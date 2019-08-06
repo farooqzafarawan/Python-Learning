@@ -7,7 +7,7 @@ import os
 # CustomerID,FirstName,LastName,Email,Phone
 # 2323651,Pilar,Adam,abbeyh91@gmail.com,516 594 7675
 
-dirpath = r'D:\PROJECTS\CustomerMaster\Data\Demo Data\OLD Data'
+dirpath = r'D:\Demo Data'
 # Existing csv file containing data
 csvfile = os.path.join(dirpath,'test.csv')
 
