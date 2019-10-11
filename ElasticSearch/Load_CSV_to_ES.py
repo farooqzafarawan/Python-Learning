@@ -1,5 +1,4 @@
-# Thanks to Stanislavprihoda for following code
-# https://github.com/stanislavprihoda
+# Thanks to Stanislavprihoda https://github.com/stanislavprihoda
 
 __all__ = ['ElasticDataloader', 'ElasticDataloaderSet',
            'ElasticDataloaderException']
