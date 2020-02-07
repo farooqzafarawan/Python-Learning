@@ -1,0 +1,20 @@
+import re
+import os
+
+outDir = r'C:\SQL'
+srcSQL = os.path.join(outDir,'INSERT_SP.sql')
+
+regex = r"(?:CREATE PROCEDURE)\s+\[dbo\]\.(?=\[([\w]+)\])"
+
+with open(srcSQL,'r') as fSQL:
+    sqlText = str(fSQL.readlines())
+    matches = re.finditer(regex, sqlText, re.MULTILINE)
+
+SPList = [match.group(1) for match in matches]    
+
+for matchNum, match in enumerate(matches, start=1):    
+    print (f"Match {matchNum} was found at {match.start()}-{match.end()}: {match.group()}")
+    
+    for groupNum in range(0, len(match.groups())):
+        groupNum = groupNum + 1
+        print (f"Group {groupNum} found at {match.start(groupNum)}-{match.end(groupNum)}: {match.group(groupNum)}" )
