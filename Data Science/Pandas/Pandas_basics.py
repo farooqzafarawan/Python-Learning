@@ -28,3 +28,20 @@ nba.head()
 # Set Display to all columns
 pd.set_option("display.max.columns", None)
 
+# Set Precision to 2
+pd.set_option("display.precision", 2)
+
+# Last 5 rows
+nba.tail()
+
+# Data Frame column data types
+nba.info()
+
+# overview of values each column contains
+nba.describe()
+
+import numpy as np
+# .describe only analyzes numeric columns by default, but you can provide other data types with include parameter:
+nba.describe(include=np.object)
+
+    
