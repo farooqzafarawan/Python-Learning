@@ -4,12 +4,13 @@ from flask import render_template
 from flask import request
 
 app = Flask(__name__)
+
 RSS_FEED = 'http://feeds.foxnews.com/foxnews/latest'
 
 @app.route("/")
-def get_news():
+def get_news():  
   feed = feedparser.parse(RSS_FEED)
-  first_article = feed['entries'][2]
+  first_article = feed['entries'][0]
 
 #   return """<html>
 #     <body>
@@ -21,7 +22,7 @@ def get_news():
 # </html>""".format(first_article.get("title"), first_article.get("published"), first_article.get("summary"))
 
   return render_template("home_simple.html",title=first_article.get("title")
-                                   ,published=first_article.get("published"),    summary=first_article.get("summary"))
+                                   ,published=first_article.get("published"),  summary=first_article.get("summary"))
 
 if __name__ == "__main__":
   app.run(port=5000, debug=False)
