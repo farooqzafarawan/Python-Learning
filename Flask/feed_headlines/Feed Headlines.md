@@ -1,7 +1,13 @@
 - [Creating Flask Application](#Creating-Flask-Application)
   * [Flask Installation](#Flask-Installation)
   * [Create HeadLines Flask Application](#Create-HeadLines-App)
-    
+- [Using RSS from Python](#Using-RSS-From-Python)    
+  * [Feedparser Installation](#Feedparser-Installation)
+  * Parsing First Article in HTML(#Parsing-First-Article-in-HTML)
+  
+- [URL routing in Flask](#URL-Routing-in-Flask)
+  * [RSS FEED URL](#RSS-FEED-URL)
+  * [Static Routing Implementation](#Static-Routing-Implementation)
     
 # Creating Flask Application
 ## Flask Installation
@@ -27,11 +33,13 @@ if __name__ == '__main__':
 
 
 # Using RSS from Python
-## Feedparser
+## Feedparser Installation
 install feedparser using following command
 ```python
 pip install feedparser
 ```
+
+## Parsing First Article in HTML
 In our headlines.py file, we'll make modifications to import the feedparser library, parse the feed, and grab the first article. We'll build up HTML formatting around the first article and show this in our application.
 Our new code adds the import for the new library, defines a new global variable for the RSS feed URL, and further adds a few lines of logic to parse the feed, grab the data we're interested in, and insert this into some very basic HTML.
 
@@ -58,14 +66,17 @@ if __name__ == "__main__":
 
 ```
 
-# URL routing in Flask
+# URL Routing in Flask
 Python decorators are represented by `@app.route("/")` line we had above our main function, and they indicate to Flask which parts of our application should be triggered by which URLs. Our base URL, which is usually something similar to site.com but in our case is the IP address of our VPS, is omitted, and we will specify the rest of the URL (that is, the path) in the decorator. Earlier, we used a single slash, indicating that the function should be triggered whenever our base URL was visited with no path specified. Now, we will set up our application so that users can visit URLs such as site.com/bbc or site.com/cnn to choose which publication they want to see an article from.
+
+## RSS FEED URLS
 The first thing we need to do is collect a few RSS URLs. At the time of writing, all of the following are valid:
 - yahoo: 'https://www.yahoo.com/news/rss/world',
 - oreilly: 'http://feeds.feedburner.com/oreilly/radar/atom',
 - google: 'https://news.google.com/rss',
 - fox: 'http://feeds.foxnews.com/foxnews/latest'
 
+## Static Routing Implementation
 First, we will consider how we might achieve our goals using static routing. It's by no means the best solution, so we'll implement static routing for only two of our publications. Once we get this working, we'll consider how to use dynamic routing instead, which is a simpler and more generic solution to many problems.
 Instead of declaring a global variable for each of our RSS feeds, we'll build a Python dictionary that encapsulates them all. We'll make our get_news() method generic and have our decorated methods call this with the relevant publication. Our modified code looks as follows:
 
