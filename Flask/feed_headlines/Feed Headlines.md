@@ -89,9 +89,9 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'iol': 'http://www.iol.co.za/cmlink/1.640'}
 
 @app.route("/")
-@app.route("/bbc")
-def bbc():
-    return get_news('bbc')
+@app.route("/fox")
+def fox():
+    return get_news('fox')
 
 @app.route("/cnn")
 def cnn():
@@ -111,4 +111,5 @@ def get_news(publication):
 
 if __name__ == "__main__":
   app.run(port=5000, debug=False)
+
 ```
