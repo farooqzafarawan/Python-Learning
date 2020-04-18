@@ -5,7 +5,7 @@
   * [Feedparser Installation](#Feedparser-Installation)
   * [Parsing First Article in HTML](#Parsing-First-Article-in-HTML)
 - [URL routing in Flask](#URL-Routing-in-Flask)
-  * [RSS FEED URL](#RSS-FEED-URL)
+  * [RSS FEED URL](#RSS-FEED-URLS)
   * [Static Routing Implementation](#Static-Routing-Implementation)
     
 # Creating Flask Application
