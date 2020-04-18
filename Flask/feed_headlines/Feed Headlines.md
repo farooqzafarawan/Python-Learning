@@ -1,4 +1,9 @@
-# Creating a new Flask application
+- [Creating Flask Application](#Creating-Flask-Application)
+  * [Flask Installation](#Flask-Installation)
+  * [Create HeadLines Flask Application](#Create-HeadLines-App)
+    
+    
+# Creating Flask Application
 ## Flask Installation
 on command prompt, use following command to install flask
 
@@ -6,7 +11,7 @@ on command prompt, use following command to install flask
 pip install flask
 ```
 
-## Create Flask Application
+## Create HeadLines App
 To begin with, we'll create the skeleton of our new Flask application, which is pretty much the same as our Hello World application. Open `headlines.py` in your editor and write the following code:
 ```python
 from flask import Flask
