@@ -1,22 +1,24 @@
-- [Creating Flask Application](#Creating-Flask-Application)
-  * [Flask Installation](#Flask-Installation)
-  * [Create HeadLines Flask Application](#Create-HeadLines-App)
-- [Using RSS from Python](#Using-RSS-From-Python)    
-  * [Feedparser Installation](#Feedparser-Installation)
-  * [Parsing First Article in HTML](#Parsing-First-Article-in-HTML)
-- [URL routing in Flask](#URL-Routing-in-Flask)
-  * [RSS FEED URL](#RSS-FEED-URLS)
-  * [Static Routing Implementation](#Static-Routing-Implementation)
+- [Creating Headline Project](#Creating-Headlines-Project)
+  * [Create Flask Application](#Creating-Flask-Application)
+     + [Flask Installation](#Flask-Installation)
+     + [Create HeadLines Flask Application](#Create-HeadLines-App)
+  * [Using RSS from Python](#Using-RSS-From-Python)    
+     + [Feedparser Installation](#Feedparser-Installation)
+     + [Parsing First Article in HTML](#Parsing-First-Article-in-HTML)
+  * [URL routing in Flask](#URL-Routing-in-Flask)
+     + [RSS FEED URL](#RSS-FEED-URLS)
+     + [Static Routing Implementation](#Static-Routing-Implementation)
     
-# Creating Flask Application
-## Flask Installation
+# Creating Headlines Project
+## Creating Flask Application
+### Flask Installation
 on command prompt, use following command to install flask
 
 ```python
 pip install flask
 ```
 
-## Create HeadLines App
+### Create HeadLines App
 To begin with, we'll create the skeleton of our new Flask application, which is pretty much the same as our Hello World application. Open `headlines.py` in your editor and write the following code:
 ```python
 from flask import Flask
@@ -31,14 +33,14 @@ if __name__ == '__main__':
 ```
 
 
-# Using RSS from Python
-## Feedparser Installation
+## Using RSS from Python
+### Feedparser Installation
 install feedparser using following command
 ```python
 pip install feedparser
 ```
 
-## Parsing First Article in HTML
+### Parsing First Article in HTML
 In our headlines.py file, we'll make modifications to import the feedparser library, parse the feed, and grab the first article. We'll build up HTML formatting around the first article and show this in our application.
 Our new code adds the import for the new library, defines a new global variable for the RSS feed URL, and further adds a few lines of logic to parse the feed, grab the data we're interested in, and insert this into some very basic HTML.
 
