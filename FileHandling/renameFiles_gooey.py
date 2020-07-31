@@ -50,8 +50,8 @@ def renameFiles():
                 print(len(path) * '...', newname)
 
                 if printNameOnly == 'YES':
-                    pass
-                    #print(newname)
+                    #pass
+                    print(newname)
                 else:
                     os.rename(filename, newname)
             else:
