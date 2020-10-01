@@ -1,3 +1,5 @@
+from PyPDF2 import PdfFileReader
+
 def split_pdf_to_two(filename,pg_num,numSplits):
     pdf_reader = PdfFileReader(open(filename, "rb"))
     try:
