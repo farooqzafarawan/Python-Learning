@@ -1,4 +1,7 @@
 from PyPDF2 import PdfFileReader
+import pathlib
+import os
+from tkinter import filedialog , Tk
 
 def split_pdf_to_two(filename,pg_num,numSplits):
     pdf_reader = PdfFileReader(open(filename, "rb"))
@@ -26,9 +29,15 @@ def split_pdf_to_two(filename,pg_num,numSplits):
         
         assert pg_num < pdf_reader.numPages
         print(pdf_reader.numPages)
+        
 
     except AssertionError as e:
         print("Error: The PDF you are cutting has less pages than you want to cut!")
+
+
+
+tkroot = Tk()  # Initializing Tkinter
+outDir = filedialog.askdirectory(parent=tkroot, initialdir="/", title='Please select a directory')
 
 PDFfile = r'C:\AWS\AWS_Solutions.pdf'
 pageNum = 250

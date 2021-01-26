@@ -1,12 +1,14 @@
 import os
-from tkinter import filedialog
+from tkinter import filedialog , Tk
 
-import os
+tkroot = Tk()  # Initializing Tkinter
+workingDir = filedialog.askdirectory(parent=tkroot, initialdir="/", title='Please select a directory')
 
-workingDir = r'C:\MEDIA\TV\MrRobot'
+#workingDir = r'C:\MEDIA\TV\MrRobot'
 
 splitChar = '.'
 #secondsplit = ''
+
 
 # Traverse root directory, and list directories as dirs and files as files
 for root, _, fileList in os.walk(workingDir):

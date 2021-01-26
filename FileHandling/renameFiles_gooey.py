@@ -22,6 +22,7 @@ def renameFiles():
     parser.add_argument('FirstSplitPattern', help="First Pattern to split file Name")
     parser.add_argument('SecondSplitPattern', help="Second Pattern to split file Name") 
     parser.add_argument('PrintFileName', help="Indicator for just printing the new name instead of rename file") 
+    
     args = parser.parse_args()
 
     workingDir = args.data_directory
