@@ -1,8 +1,5 @@
 from PyPDF2 import PdfFileReader,PdfFileWriter
-#import pathlib
 import os
-from tkinter import filedialog , Tk
-from gooey import Gooey, GooeyParser
 from pathlib import Path    
 
 
