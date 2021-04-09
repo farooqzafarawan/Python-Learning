@@ -4,8 +4,12 @@ from os.path import join
 from PIL import Image
 
 workDir = r'C:\URDU\eBooks\PDF books\MISC'
-inFile = 'Laal Qilay ky Shaam-e-Sahar' + '.pdf'
-filePDF = join(workDir, inFile)
+fileName,ext = 'Laal Qilay ky Shaam-e-Sahar', '.pdf'
+filePDF = join(workDir, fileName+ext)
+
+jpg = '.jpg'
+jp2 = '.jp2'
+png = '.png'
 
 def extractImages():
     pdfReader = PdfFileReader(open(filePDF, "rb"))
@@ -25,13 +29,14 @@ def extractImages():
 
                 if xObject[obj]['/Filter'] == '/FlateDecode':
                     img = Image.frombytes(mode, size, data)
-                    img.save(f'img{pgNum}.png')
+                    outFile = join(workDir, f'{pgNum}_{fileName}{png}')
+                    img.save(outFile)
                 elif xObject[obj]['/Filter'] == '/DCTDecode':
-                    img = open(join(workDir, f'img{pgNum}.jpg'), "wb")
+                    img = open(join(workDir, f'{pgNum} {fileName}{jpg}'), "wb")
                     img.write(data)
                     img.close()
                 elif xObject[obj]['/Filter'] == '/JPXDecode':
-                    img = open(join(workDir, f'img{pgNum}.jp2'), "wb")
+                    img = open(join(workDir, f'{pgNum} {fileName}{jp2}'), "wb")
                     img.write(data)
                     img.close()
 
