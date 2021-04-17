@@ -10,8 +10,8 @@ with open(wikifile, encoding='utf-8') as f:
 
 wikicode = mwp.parse(wikitext)
 
-# headings = wikicode.filter_headings()
-# filtered_headings = [heading.title.strip() for heading in headings]
+headings = wikicode.filter_headings()
+filtered_headings = [heading.title.strip() for heading in headings]
 
 plain_text = ''
 for node in wikicode.nodes:
