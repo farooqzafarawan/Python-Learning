@@ -10,8 +10,8 @@ with open(wikifile, encoding='utf-8') as f:
 
 wikicode = mwp.parse(wikitext)
 
-
 tags = []
+
 for tag in wikicode.filter_tags(matches=lambda tag: tag.tag == "ref"):
         tags.append(tag)
 
