@@ -14,6 +14,7 @@ headings = wikicode.filter_headings()
 filtered_headings = [heading.title.strip() for heading in headings]
 
 plain_text = ''
+templates = []
 for node in wikicode.nodes:
     type_of_node = type(node)
     if type_of_node == mwp.nodes.template.Template:
@@ -22,6 +23,9 @@ for node in wikicode.nodes:
         continue
     if type_of_node != mwp.nodes.text.Text:
         if type(node) == mwp.nodes.tag.Tag:
+            if node.tag == 'ref':
+                templates.append(node)
+
             str_node = node.contents
         elif type(node) == mwp.nodes.external_link.ExternalLink:
             str_node = node.title
@@ -33,4 +37,7 @@ for node in wikicode.nodes:
     else:
         plain_text += str(node)
 
+refTemplate = templates[0]
 print(plain_text)
+
+
