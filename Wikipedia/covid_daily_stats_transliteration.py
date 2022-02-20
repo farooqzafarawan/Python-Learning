@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import soupsieve as sv
 from pathlib import Path
 
-BASE = Path(r'D:\script\Python-Learning\FileHandling\CSV')
+BASE = Path(r'E:\Python-Learning\FileHandling\CSV')
 csvfile = BASE / 'ENG_UR.csv'
 
 page = requests.get("https://www.worldometers.info/coronavirus/")
