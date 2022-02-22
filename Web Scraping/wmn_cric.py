@@ -62,7 +62,7 @@ def addRef(REFURL):
 
     return REF1
 
-
+# Get Player name, birthday, city, country
 def playerPersonal(playerGrid):
     playerDemo = {}
     for div in playerGrid:
