@@ -7,7 +7,7 @@ from pathlib import Path
 import csv
 from csv import DictReader
 
-BASE = Path('D:\Wikipedia\code_output\FNF2022')
+BASE = Path('<DIR>')
 
 nl = '\n'
 s = " "
