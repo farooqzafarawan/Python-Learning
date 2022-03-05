@@ -7,7 +7,7 @@ from pathlib import Path
 import csv
 from csv import DictReader
 
-BASE = Path('<DIR>')
+BASE = Path('C:\LEARNING\MISC\Wikipedia')
 
 nl = '\n'
 s = " "
@@ -33,7 +33,7 @@ def enURTransliterate():
 
 def inFileReader():
     csvfile = BASE / 'women_cric_title.csv'
-    dictInfile = {}
+    lstPlayers = []
     with open(csvfile, encoding='utf-8') as cfile:
         dcsv_reader = DictReader(cfile, delimiter='|')
 
@@ -41,11 +41,9 @@ def inFileReader():
         col = dcsv_reader.fieldnames
 
         for row in dcsv_reader:
-            dictInfile[col[0]] = row['ENG']
-            dictInfile[col[1]] = row['URDU']
-            dictInfile[col[2]] = row['CricLink1']
+            lstPlayers.append(row)
 
-    return dictInfile
+    return lstPlayers
 
 
 def addRef(REFURL):
@@ -120,22 +118,33 @@ def tableDataText(tbl_stats):
     return rows
 
 
-def df_table(tbl, i):
-    tblrows = tableDataText(tbl)
+def df_table_dict(tbl_stats):
+    # Creating dictionary of Dataframes for Batting, bowling and records
+    #df_dict = {i: tableDataText(tbl) for i, tbl in enumerate(tbl_stats)}
+    
+    df_dict = {}
+    notout  = 'NO'
+    balls   = 'Balls'
+    grounds = 'GROUND'
 
-    dftable = pd.DataFrame(tblrows[1:], columns=tblrows[0])
+    for tbl in tbl_stats:
+        tblrows = tableDataText(tbl)
+        
+        dftable = pd.DataFrame(tblrows[1:], columns=tblrows[0])
+   
+        if notout in dftable:
+            dftable["CAT"] = "BAT"
+            df_dict['BAT'] = dftable
+        elif balls in dftable:
+            dftable["CAT"] = "BOWL"
+            df_dict['BOWL'] = dftable
+        elif grounds in dftable:
+            dftable["CAT"] = "RECS"
+            df_dict['RECS'] = dftable
 
-    # Using DataFrame.insert() to add a column
-    if i == 0:
-        dftable["CAT"] = "Batting"
-    elif i == 1:
-        dftable["CAT"] = "Bowling"
-    elif i == 2:
-        dftable["CAT"] = "Records"
+    #dftable.head(4)
 
-    dftable.head(4)
-
-    return dftable
+    return df_dict
 
 
 def intro(title, playerInfoDict,  ref1):
@@ -250,58 +259,76 @@ def addBatTestODIT20(df_batField):
 
     return battingLines
 
+def getCricInfoPage(WOMEN_CRIC_URL):
+    #WOMEN_CRIC_URL = refLink1
+    page = requests.get(WOMEN_CRIC_URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    return soup
+
+def getPlayerCard(soup):
+    # Player Overview Grid containing personal info in a DIV
+    playerGrid = soup.find("div", class_="player_overview-grid")
+    playerInfoDict = playerPersonal(playerGrid)
+    return playerInfoDict
+
+
+def getArticle(engTitle,urTitle,refLink1):
+    #WOMEN_CRIC_URL1 = 'https://www.espncricinfo.com/player/nicole-bolton-267611'
+    soupCricInfo = getCricInfoPage(refLink1)
+
+    #playercard = soup.find_all("div", class_="player-card-padding")
+    playerInfoDict = getPlayerCard(soupCricInfo)
+
+    # Player Teams info in a DIV grid class
+    playerTeamSoupObj = soupCricInfo.find("div", class_="overview-teams-grid mb-4")
+    lstPlayerTeams = playerTeams(playerTeamSoupObj)
+
+    # Extract Table for Batting & Bowling
+    tbl_stats = soupCricInfo.select(".table")
+
+    # Creating dictionary of Dataframes for Batting, bowling and records
+    df_cricDict = df_table_dict(tbl_stats)
+
+
+    df_bat = df_cricDict['BAT']
+
+
+    outfile = BASE / engTitle
+    with open(outfile, 'w', encoding='utf-8') as ofile:
+
+        # Intro of Urdu Article
+        introLN = intro(urTitle, playerInfoDict, refLink1)
+        ofile.write(f'\n{introLN}')
+        wikitext = introLN + nl
+
+        # Add Teams of player
+        teamPL = Teams(lstPlayerTeams)
+        ofile.write(f'\n{teamPL}')
+        wikitext = teamPL + nl
+
+        # Add Batting text for Test, ODI and T20
+        batting_text = addBatTestODIT20(df_bat)
+        ofile.write(f'\n{batting_text}')
+        wikitext = batting_text + nl
+
+        # Add Reference Template
+        hawalajaat = d['hawalajaat']
+        ref_template = f'== {hawalajaat} ==' + nl + '{{' + hawalajaat + '}}'
+        ofile.write(f'\n\n{ref_template}')
+        wikitext += ref_template
+
+    print('Article written!!!')
+
+# Get dictionary of English roman words and Urdu Words
+en_ur_dict = enURTransliterate()
 
 # Getting english and Urdu title along with Reference Link extracted from csv file
-titleDict = inFileReader()
-engTitle = titleDict.get('ENG') + '.txt'
-urTitle = titleDict.get('URDU')
-refLink1 = titleDict.get('CricLink1')
+lstCricPlayers = inFileReader()
+for player in lstCricPlayers:
+    engTitle = player.get('ENG') + '.txt'
+    urTitle  = player.get('URDU')
+    refLink1 = player.get('CricLink1')
 
-#WOMEN_CRIC_URL1 = 'https://www.espncricinfo.com/player/nicole-bolton-267611'
-WOMEN_CRIC_URL = refLink1
-page = requests.get(WOMEN_CRIC_URL)
-soup = BeautifulSoup(page.content, 'html.parser')
+    getArticle(engTitle,urTitle,refLink1)
 
-#playercard = soup.find_all("div", class_="player-card-padding")
-
-# Player Overview Grid containing personal info in a DIV
-playerGrid = soup.find("div", class_="player_overview-grid")
-playerInfoDict = playerPersonal(playerGrid)
-
-# Player Teams info in a DIV grid class
-playerTeamSoupObj = soup.find("div", class_="overview-teams-grid mb-4")
-lstPlayerTeams = playerTeams(playerTeamSoupObj)
-
-# Extract Table for Batting & Bowling
-tbl_stats = soup.select(".table")
-
-# Creating dictionary of Dataframes for Batting, bowling and records
-df_dict_comp = {i: df_table(tbl, i) for i, tbl in enumerate(tbl_stats)}
-
-en_ur_dict = enURTransliterate()
-df_bat = df_dict_comp[0]
-
-
-outfile = BASE / engTitle
-with open(outfile, 'w', encoding='utf-8') as ofile:
-
-    # Intro of Urdu Article
-    introLN = intro(urTitle, playerInfoDict, refLink1)
-    ofile.write(f'\n{introLN}')
-    wikitext = introLN + nl
-
-    # Add Teams of player
-    teamPL = Teams(lstPlayerTeams)
-    ofile.write(f'\n{teamPL}')
-    wikitext = teamPL + nl
-
-    # Add Batting text for Test, ODI and T20
-    batting_text = addBatTestODIT20(df_bat)
-    ofile.write(f'\n{batting_text}')
-    wikitext = batting_text + nl
-
-    # Add Reference Template
-    hawalajaat = d['hawalajaat']
-    ref_template = f'== {hawalajaat} ==' + nl + '{{' + hawalajaat + '}}'
-    ofile.write(f'\n\n{ref_template}')
-    wikitext += ref_template
+print('Done')
