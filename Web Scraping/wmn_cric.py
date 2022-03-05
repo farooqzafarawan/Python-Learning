@@ -7,7 +7,7 @@ from pathlib import Path
 import csv
 from csv import DictReader
 
-BASE = Path('<REPLACE DIR>')
+BASE = Path('D:\Wikipedia\code_output\FNF2022')
 
 nl = '\n'
 s = " "
@@ -15,7 +15,7 @@ c = ' ،'
 ds = "۔ "
 btag = "'''"
 NA = 'غیرموجود'
-
+ls = "* "
 title = ''
 d = {}
 
@@ -28,9 +28,11 @@ def enURTransliterate():
         for row in csv_reader:
             d[row[0]] = row[1]
 
+    return d
+
 
 def inFileReader():
-    csvfile = BASE / 'cric_title.csv'
+    csvfile = BASE / 'women_cric_title.csv'
     dictInfile = {}
     with open(csvfile, encoding='utf-8') as cfile:
         dcsv_reader = DictReader(cfile, delimiter='|')
@@ -62,7 +64,7 @@ def addRef(REFURL):
 
     return REF1
 
-# Get Player name, birthday, city, country
+
 def playerPersonal(playerGrid):
     playerDemo = {}
     for div in playerGrid:
@@ -139,18 +141,18 @@ def df_table(tbl, i):
 def intro(title, playerInfoDict,  ref1):
     bTitle = btag + title + btag
     Born = playerInfoDict['Born']
-    bday, year, city, prov, cntry = Born.split(',')
+    #bday, year, city, prov, cntry = Born.split(',')
 
-    line1 = bTitle + s + cntry + s + d['ki'] + s + \
+    line1 = bTitle + s + Born + s + d['ki'] + s + \
         d['khatoon'] + s + d['cric'] + s + \
         d['khiladi'] + s + d['hein'] + s + nl + addRef(ref1) + ds + nl
 
-    line2 = title + s + city + c + cntry + s + \
-        d['mein'] + s + bday + s + d['ko'] + \
+    line2 = title + s + Born + s + \
+        d['mein'] + s + Born + s + d['ko'] + \
         s + d['paida'] + s + d['hoeen'] + s+ds
 
     line3 = d['unho'] + s + d['nay']+s+d['test']+s + \
-        d['cric']+s+d['aur']+s+d['one']+s + \
+        d['cric']+s+d['aur']+s+d['odi']+s + \
         d['cric']+s+d['khaili']+s+d['hai'] + ds
     t_t20 = " ٹیسٹ "
 
@@ -160,21 +162,102 @@ def intro(title, playerInfoDict,  ref1):
     line5 = line1 + line2 + line3 + line4
 
     lines = line5
-    TotCric = f' انھوں نے بین الاقوامی سطح پر مجموعی طور پر'
-    TotCric += d['achi']+s+d['cric']+s+d['khaili']+s+d['hai']+s+ds
-    # TotCric += str(tmat) + t_t20 + aur + str(mat) + \
-    #     s + "ون ڈے میچ کھیلے۔" + nl
+
+    #TotCric = f' انھوں نے بین الاقوامی سطح پر مجموعی طور پر'
+    TotCric = d['unho']+s+d['nay']+s+d['international']+s+d['sata']+s+d['par']+s+d['majmoi']+s + \
+        d['taur']+s+d['par']+s+d['achi']+s + \
+        d['cric']+s+d['khaili']+s+d['hai']+s+ds
+
     all_lines = lines + TotCric
     return all_lines
 
+# Teams player is associated with
 
-# Getting english and Urdu title extracted from csv file
+
+def Teams(lstPlayerTeams):
+    TeamLines = nl + "== ٹیمیں ==" + nl
+    TeamLines += urTitle + s + d['nay']+s + d['apnay']+s + d['career']+s + d['mein'] + s + d['kayi']+s + d['teamo']+s + d['ki']+s + \
+        d['numaindagi'] + s + d['ki']+s + d['jin']+s + d['mein']+s + d['qabil']+s + d['zikr']+s + \
+        d['mundarjazail'] + s + d['hein'] + ":" + nl
+
+    for team in lstPlayerTeams:
+        TeamLines += ls + team + nl
+
+    return TeamLines
+
+
+def addBatting(df, cric_format):
+    if cric_format == 'ODI':
+        cricform = d['odi']
+        batField = nl + "===" + cricform + s + d['career'] + "===" + s + nl
+    elif cric_format == 'T20':
+        cricform = d['T20']
+        batField = nl + "===" + cricform + s + d['career'] + "===" + s + nl
+    elif cric_format == 'TEST':
+        cricform = d['test']
+        batField = nl + "===" + cricform + s + d['career'] + "===" + s + nl
+
+    batField += urTitle + s + d['nay']+s + df['Mat'] + \
+        s + cricform + s + d['mat']+s + d['khailay']+c+s
+
+    InnsLn = d['jis']+s+d['mein']+s + \
+        df['Inns'] + s + d['shamil']+s+d['hein']+c+s
+
+    notoutLn = d['wo']+s+df['NO'] + s + \
+        d['baar']+s+d['notout']+s+d['rahein']+ds
+
+    RunsLn = urTitle + s + d['nay']+s + \
+        df['Runs'] + s + d['score']+s+d['kiye']+ds
+
+    AVG = d['unho']+s + d['nay']+s + df['Ave']+s + d['ki'] + \
+        s + d['avg']+s + d['se']+s+d['score']+s+d['banaye']+c+s
+
+    HS = d['un'] + s + d['ka'] + s+d['behtreen'] + \
+        s+d['score']+s + df['HS']+s + d['raha']+ds
+
+    batField += InnsLn + notoutLn + RunsLn + AVG + HS
+
+    cent = s + d['centuriyan'] + s
+    cent_50 = d['unho'] + s + d['ne'] + s + df['50s'] + s + d['nisf'] + \
+        cent + s + d['aur'] + s + df['100s'] + cent + d['banayi']
+
+    four = d['unho'] + s + d['ne'] + s+d['apnay']+s + \
+        d['career']+s+d['mein']+s + df['6s'] + s+d['chakay']+s
+
+    six = d['aur']+s + df['4s'] + s+d['chaukay']+s+d['maaray']+ds
+
+    catch = d['unho'] + s + d['ne'] + s+d['apnay']+s+d['career'] + \
+        s+d['mein']+s + df['Ct'] + s + d['catch']+s + d['pakray'] + ds + nl
+
+    batField += cent_50 + four + six + catch
+
+    return batField
+
+
+def addBatTestODIT20(df_batField):
+    df_bat_test = df_batField.iloc[0]
+    test = addBatting(df_bat_test, 'TEST')
+
+    df_bat_ODI = df_batField.iloc[1]
+    odi = addBatting(df_bat_ODI, 'ODI')
+
+    df_bat_T20 = df_batField.iloc[2]
+    t20 = addBatting(df_bat_T20, 'T20')
+
+    battingLines = test + odi + t20
+
+    ExtraLn = "انھوں نے چھوٹی عمر میں مقامی کرکٹ کا آغاز کر دیا تھا، اس کے بعد وہ مختلف کلبوں کی طرف سے کھیلتی رہیں اور فرسٹ کلاس کرکٹ بھی کھیلی۔"
+
+    return battingLines
+
+
+# Getting english and Urdu title along with Reference Link extracted from csv file
 titleDict = inFileReader()
 engTitle = titleDict.get('ENG') + '.txt'
 urTitle = titleDict.get('URDU')
 refLink1 = titleDict.get('CricLink1')
 
-WOMEN_CRIC_URL1 = 'https://www.espncricinfo.com/player/nicole-bolton-267611'
+#WOMEN_CRIC_URL1 = 'https://www.espncricinfo.com/player/nicole-bolton-267611'
 WOMEN_CRIC_URL = refLink1
 page = requests.get(WOMEN_CRIC_URL)
 soup = BeautifulSoup(page.content, 'html.parser')
@@ -196,6 +279,8 @@ tbl_stats = soup.select(".table")
 df_dict_comp = {i: df_table(tbl, i) for i, tbl in enumerate(tbl_stats)}
 
 en_ur_dict = enURTransliterate()
+df_bat = df_dict_comp[0]
+
 
 outfile = BASE / engTitle
 with open(outfile, 'w', encoding='utf-8') as ofile:
@@ -205,9 +290,15 @@ with open(outfile, 'w', encoding='utf-8') as ofile:
     ofile.write(f'\n{introLN}')
     wikitext = introLN + nl
 
-    cric_car = nl + "== کرکٹ کیریئر ==" + nl
-    ofile.write(f'{cric_car}')
-    wikitext += cric_car + nl
+    # Add Teams of player
+    teamPL = Teams(lstPlayerTeams)
+    ofile.write(f'\n{teamPL}')
+    wikitext = teamPL + nl
+
+    # Add Batting text for Test, ODI and T20
+    batting_text = addBatTestODIT20(df_bat)
+    ofile.write(f'\n{batting_text}')
+    wikitext = batting_text + nl
 
     # Add Reference Template
     hawalajaat = d['hawalajaat']
