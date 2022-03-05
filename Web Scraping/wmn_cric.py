@@ -1,3 +1,5 @@
+import encodings
+from venv import create
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -5,7 +7,7 @@ from pathlib import Path
 import csv
 from csv import DictReader
 
-BASE = Path('<DIR>')
+BASE = Path('C:\LEARNING\MISC\Wikipedia')
 
 nl = '\n'
 s = " "
@@ -28,6 +30,13 @@ def enURTransliterate():
 
     return d
 
+def extraLines():
+    lstExtraLines = []
+    youngAgeCric = d['unho']+s+d['nay']+s+d['choti']+s+d['umar']+s+d['mein']+s+d['maqami']+s+d['cric']+s+d['ka']+s+d['aghaaz']+s+d['kar']+s+d['diya']+s+d['tha']+c
+    club_firstcric = d['iss']+s+d['ke']+s+d['baad']+s+d['wo']+s+d['mukhtalif']+s+d['clubo']+s+d['ki']+s+d['taraf'] +s+ d['se']+s+d['khailti']+s+d['rahein']+s+d['aur']+s+d['first']+s+d['class']+s+d['cric']+s+d['bhi']+s+d['khaili']+ds
+
+    lstExtraLines = [youngAgeCric, club_firstcric]
+    return lstExtraLines
 
 def inFileReader():
     csvfile = BASE / 'women_cric_title.csv'
@@ -241,19 +250,22 @@ def addBatting(df, cric_format):
     return batField
 
 
-def addBatTestODIT20(df_batField):
-    df_bat_test = df_batField.iloc[0]
-    test = addBatting(df_bat_test, 'TEST')
+def addBatTestODIT20(df_bat):
+    bat=''
+    test,odi,t20 = bat,bat,bat
+    for i in range(df_bat.shape[0]):
+        print(i)
+        
+        if df_bat.iloc[i]['Format'] == 'WTEST':
+            #df_bat_test = df_batField.iloc[i]
+            test = addBatting(df_bat.iloc[i], 'TEST')
+        elif df_bat.iloc[i]['Format'] == 'WODI':
+            odi = addBatting(df_bat.iloc[i], 'ODI')
+        elif df_bat.iloc[i]['Format'] == 'WT20I':
+            t20 = addBatting(df_bat.iloc[i], 'T20')
 
-    df_bat_ODI = df_batField.iloc[1]
-    odi = addBatting(df_bat_ODI, 'ODI')
-
-    df_bat_T20 = df_batField.iloc[2]
-    t20 = addBatting(df_bat_T20, 'T20')
 
     battingLines = test + odi + t20
-
-    ExtraLn = "انھوں نے چھوٹی عمر میں مقامی کرکٹ کا آغاز کر دیا تھا، اس کے بعد وہ مختلف کلبوں کی طرف سے کھیلتی رہیں اور فرسٹ کلاس کرکٹ بھی کھیلی۔"
 
     return battingLines
 
@@ -309,6 +321,12 @@ def getArticle(engTitle,urTitle,refLink1):
         ofile.write(f'\n{batting_text}')
         wikitext = batting_text + nl
 
+        # Add Extra Lines
+        lstAdditionalLines = extraLines()
+        for ln in lstAdditionalLines:
+            ofile.write(f'{ln}')
+            wikitext = batting_text + nl
+
         # Add Reference Template
         hawalajaat = d['hawalajaat']
         ref_template = f'== {hawalajaat} ==' + nl + '{{' + hawalajaat + '}}'
@@ -319,6 +337,7 @@ def getArticle(engTitle,urTitle,refLink1):
 
 # Get dictionary of English roman words and Urdu Words
 en_ur_dict = enURTransliterate()
+
 
 # Getting english and Urdu title along with Reference Link extracted from csv file
 lstCricPlayers = inFileReader()
