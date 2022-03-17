@@ -217,7 +217,7 @@ def addBatting(df, cric_format):
         s + cricform + s + d['mat']+s + d['khailay']+c+s
 
     InnsLn = d['jis']+s+d['mein']+s + \
-        df['Inns'] + s + d['shamil']+s+d['hein']+c+s
+        df['Inns'] + s + d['inns']  +s+ d['shamil']+s+d['hein']+c+s
 
     notoutLn = d['wo']+s+df['NO'] + s + \
         d['baar']+s+d['notout']+s+d['rahein']+ds
@@ -235,7 +235,7 @@ def addBatting(df, cric_format):
 
     cent = s + d['centuriyan'] + s
     cent_50 = d['unho'] + s + d['ne'] + s + df['50s'] + s + d['nisf'] + \
-        cent + s + d['aur'] + s + df['100s'] + cent + d['banayi']
+        cent + s + d['aur'] + s + df['100s'] + cent + d['banayi']+ds
 
     four = d['unho'] + s + d['ne'] + s+d['apnay']+s + \
         d['career']+s+d['mein']+s + df['6s'] + s+d['chakay']+s
@@ -269,6 +269,39 @@ def addBatTestODIT20(df_bat):
 
     return battingLines
 
+def bowlingFormat(df):
+    test,odi,t20 = '','',''  # initializing variable so that they don't throw reference before assignment error
+    
+    for i in range(df.shape[0]):
+        if df.iloc[i]['Format'] == 'WTEST':
+            test = addbowling(df.iloc[i], 'TEST')
+        elif df.iloc[i]['Format'] == 'WODI':
+            odi = addbowling(df.iloc[i], 'ODI')
+        elif df.iloc[i]['Format'] == 'WT20I':
+            t20 = addbowling(df.iloc[i], 'T20')
+
+    bowlingLn = test + odi + t20
+
+    return bowlingLn
+
+def addbowling(df, cric_format):
+    if cric_format == 'ODI':
+        bowlLn = nl + "===" + d['odi'] + s + d['bowling'] + "===" + s + nl
+    elif cric_format == 'T20':
+        bowlLn = nl + "===" + d['T20'] + s + d['bowling'] + "===" + s + nl
+    elif cric_format == 'TEST':
+        bowlLn = nl + "===" + d['test'] + s + d['bowling'] + "===" + s + nl
+
+    bowlLn = d['unho'] +s+ d['ne'] +s+ d['kul'] +s+ df['Balls'] +s+ d['gaindein'] +s+ d['phainkein'] +s+ df['Wkts'] +s
+    bowlLn += d['wicketein'] +s+ d['hasil'] +s+ d['kein']
+    bowlLn += s + d['un'] +s+  d['ki'] +s+ d['bowling'] +s+ d['ki']+s+ d['oast'] +s+ df['Ave'] +s+ d['rahi']
+    bowlLn += s + d['jis'] +s+ d['mein'] +s+ df['4w'] +s+ d['dafa'] +s+ d['chaar'] + s 
+    bowlLn += d['wicketein'] +s+ d['aur'] +s+ df['5w'] +s+ d['dafa'] +s
+    bowlLn += d['paanch'] +s+ d['wicketein'] +s+ d['shamil'] +s+ d['hein'] + ds
+    bowlLn += d['un'] +s+ d['ki'] +s+ d['behtreen'] +s+ d['bowling'] +s+ df['BBI'] +s+ d['rahi'] +ds
+    
+    return bowlLn    
+
 def getCricInfoPage(WOMEN_CRIC_URL):
     #WOMEN_CRIC_URL = refLink1
     page = requests.get(WOMEN_CRIC_URL)
@@ -301,9 +334,10 @@ def getArticle(engTitle,urTitle,refLink1):
 
 
     df_bat = df_cricDict['BAT']
+    df_bowl = df_cricDict['BOWL']
 
 
-    outfile = BASE / engTitle
+    outfile = BASE /  'Articles' / engTitle
     with open(outfile, 'w', encoding='utf-8') as ofile:
 
         # Intro of Urdu Article
@@ -321,10 +355,14 @@ def getArticle(engTitle,urTitle,refLink1):
         ofile.write(f'\n{batting_text}')
         wikitext = batting_text + nl
 
+        bowl_text = bowlingFormat(df_bowl)
+        ofile.write(f'\n{bowl_text}')
+        wikitext = batting_text + nl
+
         # Add Extra Lines
         lstAdditionalLines = extraLines()
         for ln in lstAdditionalLines:
-            ofile.write(f'{ln}')
+            ofile.write(f'\n{ln}')
             wikitext = batting_text + nl
 
         # Add Reference Template
