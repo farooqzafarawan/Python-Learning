@@ -7,7 +7,7 @@ from pathlib import Path
 import csv
 from csv import DictReader
 
-BASE = Path('<REPLACE DIR>')
+BASE = Path('C:\LEARNING\MISC\Wikipedia')
 
 nl = '\n'
 s = " "
@@ -15,7 +15,7 @@ c = ' ،'
 ds = "۔ "
 btag = "'''"
 NA = 'غیرموجود'
-
+ls = "* "
 title = ''
 d = {}
 
@@ -28,10 +28,19 @@ def enURTransliterate():
         for row in csv_reader:
             d[row[0]] = row[1]
 
+    return d
+
+def extraLines():
+    lstExtraLines = []
+    youngAgeCric = d['unho']+s+d['nay']+s+d['choti']+s+d['umar']+s+d['mein']+s+d['maqami']+s+d['cric']+s+d['ka']+s+d['aghaaz']+s+d['kar']+s+d['diya']+s+d['tha']+c
+    club_firstcric = d['iss']+s+d['ke']+s+d['baad']+s+d['wo']+s+d['mukhtalif']+s+d['clubo']+s+d['ki']+s+d['taraf'] +s+ d['se']+s+d['khailti']+s+d['rahein']+s+d['aur']+s+d['first']+s+d['class']+s+d['cric']+s+d['bhi']+s+d['khaili']+ds
+
+    lstExtraLines = [youngAgeCric, club_firstcric]
+    return lstExtraLines
 
 def inFileReader():
-    csvfile = BASE / 'cric_title.csv'
-    dictInfile = {}
+    csvfile = BASE / 'women_cric_title.csv'
+    lstPlayers = []
     with open(csvfile, encoding='utf-8') as cfile:
         dcsv_reader = DictReader(cfile, delimiter='|')
 
@@ -39,11 +48,9 @@ def inFileReader():
         col = dcsv_reader.fieldnames
 
         for row in dcsv_reader:
-            dictInfile[col[0]] = row['ENG']
-            dictInfile[col[1]] = row['URDU']
-            dictInfile[col[2]] = row['CricLink1']
+            lstPlayers.append(row)
 
-    return dictInfile
+    return lstPlayers
 
 
 def addRef(REFURL):
@@ -62,7 +69,7 @@ def addRef(REFURL):
 
     return REF1
 
-# Get Player name, birthday, city, country
+
 def playerPersonal(playerGrid):
     playerDemo = {}
     for div in playerGrid:
@@ -118,39 +125,50 @@ def tableDataText(tbl_stats):
     return rows
 
 
-def df_table(tbl, i):
-    tblrows = tableDataText(tbl)
+def df_table_dict(tbl_stats):
+    # Creating dictionary of Dataframes for Batting, bowling and records
+    #df_dict = {i: tableDataText(tbl) for i, tbl in enumerate(tbl_stats)}
+    
+    df_dict = {}
+    notout  = 'NO'
+    balls   = 'Balls'
+    grounds = 'GROUND'
 
-    dftable = pd.DataFrame(tblrows[1:], columns=tblrows[0])
+    for tbl in tbl_stats:
+        tblrows = tableDataText(tbl)
+        
+        dftable = pd.DataFrame(tblrows[1:], columns=tblrows[0])
+   
+        if notout in dftable:
+            dftable["CAT"] = "BAT"
+            df_dict['BAT'] = dftable
+        elif balls in dftable:
+            dftable["CAT"] = "BOWL"
+            df_dict['BOWL'] = dftable
+        elif grounds in dftable:
+            dftable["CAT"] = "RECS"
+            df_dict['RECS'] = dftable
 
-    # Using DataFrame.insert() to add a column
-    if i == 0:
-        dftable["CAT"] = "Batting"
-    elif i == 1:
-        dftable["CAT"] = "Bowling"
-    elif i == 2:
-        dftable["CAT"] = "Records"
+    #dftable.head(4)
 
-    dftable.head(4)
-
-    return dftable
+    return df_dict
 
 
 def intro(title, playerInfoDict,  ref1):
     bTitle = btag + title + btag
     Born = playerInfoDict['Born']
-    bday, year, city, prov, cntry = Born.split(',')
+    #bday, year, city, prov, cntry = Born.split(',')
 
-    line1 = bTitle + s + cntry + s + d['ki'] + s + \
+    line1 = bTitle + s + Born + s + d['ki'] + s + \
         d['khatoon'] + s + d['cric'] + s + \
         d['khiladi'] + s + d['hein'] + s + nl + addRef(ref1) + ds + nl
 
-    line2 = title + s + city + c + cntry + s + \
-        d['mein'] + s + bday + s + d['ko'] + \
+    line2 = title + s + Born + s + \
+        d['mein'] + s + Born + s + d['ko'] + \
         s + d['paida'] + s + d['hoeen'] + s+ds
 
     line3 = d['unho'] + s + d['nay']+s+d['test']+s + \
-        d['cric']+s+d['aur']+s+d['one']+s + \
+        d['cric']+s+d['aur']+s+d['odi']+s + \
         d['cric']+s+d['khaili']+s+d['hai'] + ds
     t_t20 = " ٹیسٹ "
 
@@ -160,57 +178,212 @@ def intro(title, playerInfoDict,  ref1):
     line5 = line1 + line2 + line3 + line4
 
     lines = line5
-    TotCric = f' انھوں نے بین الاقوامی سطح پر مجموعی طور پر'
-    TotCric += d['achi']+s+d['cric']+s+d['khaili']+s+d['hai']+s+ds
-    # TotCric += str(tmat) + t_t20 + aur + str(mat) + \
-    #     s + "ون ڈے میچ کھیلے۔" + nl
+
+    #TotCric = f' انھوں نے بین الاقوامی سطح پر مجموعی طور پر'
+    TotCric = d['unho']+s+d['nay']+s+d['international']+s+d['sata']+s+d['par']+s+d['majmoi']+s + \
+        d['taur']+s+d['par']+s+d['achi']+s + \
+        d['cric']+s+d['khaili']+s+d['hai']+s+ds
+
     all_lines = lines + TotCric
     return all_lines
 
+# Teams player is associated with
 
-# Getting english and Urdu title extracted from csv file
-titleDict = inFileReader()
-engTitle = titleDict.get('ENG') + '.txt'
-urTitle = titleDict.get('URDU')
-refLink1 = titleDict.get('CricLink1')
 
-WOMEN_CRIC_URL1 = 'https://www.espncricinfo.com/player/nicole-bolton-267611'
-WOMEN_CRIC_URL = refLink1
-page = requests.get(WOMEN_CRIC_URL)
-soup = BeautifulSoup(page.content, 'html.parser')
+def Teams(lstPlayerTeams):
+    TeamLines = nl + "== ٹیمیں ==" + nl
+    TeamLines += urTitle + s + d['nay']+s + d['apnay']+s + d['career']+s + d['mein'] + s + d['kayi']+s + d['teamo']+s + d['ki']+s + \
+        d['numaindagi'] + s + d['ki']+s + d['jin']+s + d['mein']+s + d['qabil']+s + d['zikr']+s + \
+        d['mundarjazail'] + s + d['hein'] + ":" + nl
 
-#playercard = soup.find_all("div", class_="player-card-padding")
+    for team in lstPlayerTeams:
+        TeamLines += ls + team + nl
 
-# Player Overview Grid containing personal info in a DIV
-playerGrid = soup.find("div", class_="player_overview-grid")
-playerInfoDict = playerPersonal(playerGrid)
+    return TeamLines
 
-# Player Teams info in a DIV grid class
-playerTeamSoupObj = soup.find("div", class_="overview-teams-grid mb-4")
-lstPlayerTeams = playerTeams(playerTeamSoupObj)
 
-# Extract Table for Batting & Bowling
-tbl_stats = soup.select(".table")
+def addBatting(df, cric_format):
+    if cric_format == 'ODI':
+        cricform = d['odi']
+        batField = nl + "===" + cricform + s + d['career'] + "===" + s + nl
+    elif cric_format == 'T20':
+        cricform = d['T20']
+        batField = nl + "===" + cricform + s + d['career'] + "===" + s + nl
+    elif cric_format == 'TEST':
+        cricform = d['test']
+        batField = nl + "===" + cricform + s + d['career'] + "===" + s + nl
 
-# Creating dictionary of Dataframes for Batting, bowling and records
-df_dict_comp = {i: df_table(tbl, i) for i, tbl in enumerate(tbl_stats)}
+    batField += urTitle + s + d['nay']+s + df['Mat'] + \
+        s + cricform + s + d['mat']+s + d['khailay']+c+s
 
+    InnsLn = d['jis']+s+d['mein']+s + \
+        df['Inns'] + s + d['inns']  +s+ d['shamil']+s+d['hein']+c+s
+
+    notoutLn = d['wo']+s+df['NO'] + s + \
+        d['baar']+s+d['notout']+s+d['rahein']+ds
+
+    RunsLn = urTitle + s + d['nay']+s + \
+        df['Runs'] + s + d['score']+s+d['kiye']+ds
+
+    AVG = d['unho']+s + d['nay']+s + df['Ave']+s + d['ki'] + \
+        s + d['avg']+s + d['se']+s+d['score']+s+d['banaye']+c+s
+
+    HS = d['un'] + s + d['ka'] + s+d['behtreen'] + \
+        s+d['score']+s + df['HS']+s + d['raha']+ds
+
+    batField += InnsLn + notoutLn + RunsLn + AVG + HS
+
+    cent = s + d['centuriyan'] + s
+    cent_50 = d['unho'] + s + d['ne'] + s + df['50s'] + s + d['nisf'] + \
+        cent + s + d['aur'] + s + df['100s'] + cent + d['banayi']+ds
+
+    four = d['unho'] + s + d['ne'] + s+d['apnay']+s + \
+        d['career']+s+d['mein']+s + df['6s'] + s+d['chakay']+s
+
+    six = d['aur']+s + df['4s'] + s+d['chaukay']+s+d['maaray']+ds
+
+    catch = d['unho'] + s + d['ne'] + s+d['apnay']+s+d['career'] + \
+        s+d['mein']+s + df['Ct'] + s + d['catch']+s + d['pakray'] + ds + nl
+
+    batField += cent_50 + four + six + catch
+
+    return batField
+
+
+def addBatTestODIT20(df_bat):
+    bat=''
+    test,odi,t20 = bat,bat,bat
+    for i in range(df_bat.shape[0]):
+        print(i)
+        
+        if df_bat.iloc[i]['Format'] == 'WTEST':
+            #df_bat_test = df_batField.iloc[i]
+            test = addBatting(df_bat.iloc[i], 'TEST')
+        elif df_bat.iloc[i]['Format'] == 'WODI':
+            odi = addBatting(df_bat.iloc[i], 'ODI')
+        elif df_bat.iloc[i]['Format'] == 'WT20I':
+            t20 = addBatting(df_bat.iloc[i], 'T20')
+
+
+    battingLines = test + odi + t20
+
+    return battingLines
+
+def bowlingFormat(df):
+    test,odi,t20 = '','',''  # initializing variable so that they don't throw reference before assignment error
+    
+    for i in range(df.shape[0]):
+        if df.iloc[i]['Format'] == 'WTEST':
+            test = addbowling(df.iloc[i], 'TEST')
+        elif df.iloc[i]['Format'] == 'WODI':
+            odi = addbowling(df.iloc[i], 'ODI')
+        elif df.iloc[i]['Format'] == 'WT20I':
+            t20 = addbowling(df.iloc[i], 'T20')
+
+    bowlingLn = test + odi + t20
+
+    return bowlingLn
+
+def addbowling(df, cric_format):
+    if cric_format == 'ODI':
+        bowlLn = nl + "===" + d['odi'] + s + d['bowling'] + "===" + s + nl
+    elif cric_format == 'T20':
+        bowlLn = nl + "===" + d['T20'] + s + d['bowling'] + "===" + s + nl
+    elif cric_format == 'TEST':
+        bowlLn = nl + "===" + d['test'] + s + d['bowling'] + "===" + s + nl
+
+    bowlLn = d['unho'] +s+ d['ne'] +s+ d['kul'] +s+ df['Balls'] +s+ d['gaindein'] +s+ d['phainkein'] +s+ df['Wkts'] +s
+    bowlLn += d['wicketein'] +s+ d['hasil'] +s+ d['kein']
+    bowlLn += s + d['un'] +s+  d['ki'] +s+ d['bowling'] +s+ d['ki']+s+ d['oast'] +s+ df['Ave'] +s+ d['rahi']
+    bowlLn += s + d['jis'] +s+ d['mein'] +s+ df['4w'] +s+ d['dafa'] +s+ d['chaar'] + s 
+    bowlLn += d['wicketein'] +s+ d['aur'] +s+ df['5w'] +s+ d['dafa'] +s
+    bowlLn += d['paanch'] +s+ d['wicketein'] +s+ d['shamil'] +s+ d['hein'] + ds
+    bowlLn += d['un'] +s+ d['ki'] +s+ d['behtreen'] +s+ d['bowling'] +s+ df['BBI'] +s+ d['rahi'] +ds
+    
+    return bowlLn    
+
+def getCricInfoPage(WOMEN_CRIC_URL):
+    #WOMEN_CRIC_URL = refLink1
+    page = requests.get(WOMEN_CRIC_URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    return soup
+
+def getPlayerCard(soup):
+    # Player Overview Grid containing personal info in a DIV
+    playerGrid = soup.find("div", class_="player_overview-grid")
+    playerInfoDict = playerPersonal(playerGrid)
+    return playerInfoDict
+
+
+def getArticle(engTitle,urTitle,refLink1):
+    #WOMEN_CRIC_URL1 = 'https://www.espncricinfo.com/player/nicole-bolton-267611'
+    soupCricInfo = getCricInfoPage(refLink1)
+
+    #playercard = soup.find_all("div", class_="player-card-padding")
+    playerInfoDict = getPlayerCard(soupCricInfo)
+
+    # Player Teams info in a DIV grid class
+    playerTeamSoupObj = soupCricInfo.find("div", class_="overview-teams-grid mb-4")
+    lstPlayerTeams = playerTeams(playerTeamSoupObj)
+
+    # Extract Table for Batting & Bowling
+    tbl_stats = soupCricInfo.select(".table")
+
+    # Creating dictionary of Dataframes for Batting, bowling and records
+    df_cricDict = df_table_dict(tbl_stats)
+
+
+    df_bat = df_cricDict['BAT']
+    df_bowl = df_cricDict['BOWL']
+
+
+    outfile = BASE /  'Articles' / engTitle
+    with open(outfile, 'w', encoding='utf-8') as ofile:
+
+        # Intro of Urdu Article
+        introLN = intro(urTitle, playerInfoDict, refLink1)
+        ofile.write(f'\n{introLN}')
+        wikitext = introLN + nl
+
+        # Add Teams of player
+        teamPL = Teams(lstPlayerTeams)
+        ofile.write(f'\n{teamPL}')
+        wikitext = teamPL + nl
+
+        # Add Batting text for Test, ODI and T20
+        batting_text = addBatTestODIT20(df_bat)
+        ofile.write(f'\n{batting_text}')
+        wikitext = batting_text + nl
+
+        bowl_text = bowlingFormat(df_bowl)
+        ofile.write(f'\n{bowl_text}')
+        wikitext = batting_text + nl
+
+        # Add Extra Lines
+        lstAdditionalLines = extraLines()
+        for ln in lstAdditionalLines:
+            ofile.write(f'\n{ln}')
+            wikitext = batting_text + nl
+
+        # Add Reference Template
+        hawalajaat = d['hawalajaat']
+        ref_template = f'== {hawalajaat} ==' + nl + '{{' + hawalajaat + '}}'
+        ofile.write(f'\n\n{ref_template}')
+        wikitext += ref_template
+
+    print('Article written!!!')
+
+# Get dictionary of English roman words and Urdu Words
 en_ur_dict = enURTransliterate()
 
-outfile = BASE / engTitle
-with open(outfile, 'w', encoding='utf-8') as ofile:
 
-    # Intro of Urdu Article
-    introLN = intro(urTitle, playerInfoDict, refLink1)
-    ofile.write(f'\n{introLN}')
-    wikitext = introLN + nl
+# Getting english and Urdu title along with Reference Link extracted from csv file
+lstCricPlayers = inFileReader()
+for player in lstCricPlayers:
+    engTitle = player.get('ENG') + '.txt'
+    urTitle  = player.get('URDU')
+    refLink1 = player.get('CricLink1')
 
-    cric_car = nl + "== کرکٹ کیریئر ==" + nl
-    ofile.write(f'{cric_car}')
-    wikitext += cric_car + nl
+    getArticle(engTitle,urTitle,refLink1)
 
-    # Add Reference Template
-    hawalajaat = d['hawalajaat']
-    ref_template = f'== {hawalajaat} ==' + nl + '{{' + hawalajaat + '}}'
-    ofile.write(f'\n\n{ref_template}')
-    wikitext += ref_template
+print('Done')

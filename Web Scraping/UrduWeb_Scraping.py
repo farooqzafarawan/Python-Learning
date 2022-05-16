@@ -1,26 +1,36 @@
 import re
 import requests
 from bs4 import BeautifulSoup
+from pathlib import Path
 
-# Link of Urdu Novel Posts
-MEHFIL_URL = 'https://www.urduweb.org/mehfil/threads/%D9%88%DB%81-%D8%AC%D9%88-%D9%82%D8%B1%D8%B6-%D8%B1%DA%A9%DA%BE%D8%AA%DB%92-%D8%AA%DA%BE%DB%92-%D8%AC%D8%A7%D9%86-%D9%BE%D8%B1-%D8%A7%D8%B2-%D9%81%D8%B1%D8%AD%D8%AA-%D8%A7%D8%B4%D8%AA%DB%8C%D8%A7%D9%82-%D9%85%DA%A9%D9%85%D9%84-%D9%86%D8%A7%D9%88%D9%84.6032/'
+BASE = Path('C:\LEARNING\MISC\WebScraping')
+
+# Link of AlFarooq Typing by Shamshaad
+MEHFIL_URL = 'https://tinyurl.com/alfarooq-urduweb'
 html = requests.get(MEHFIL_URL).text
 soup = BeautifulSoup(html, "lxml")
 
 #articles = soup.findAll("div")
+#items = dict()
 
-items = dict()
-article_rows = soup.findAll("blockquote", {"class": "messageText"})
+#Previously it was "messageText" class within blockquote tag, now it is within div tag
+article_rows = soup.find_all("div", class_="bbWrapper")
 
-# if want to print all article_rows then remove indexing of first element article_rows[0]
-articleSoup = BeautifulSoup(str(article_rows[0]), "lxml")
-articleText = articleSoup.get_text()
+try:
 
-# regex pattern for matching square brackets and text within it [*]
-strCleanred = re.sub("[\[].*?[\]]", "",  articleText)
+    if article_rows:
+        # if want to print all article_rows then remove indexing of first element article_rows[0]
+        articleSoup = BeautifulSoup(str(article_rows[0]), "lxml")
+        articleText = articleSoup.get_text()
 
-#print(strCleaned)
+        # regex pattern for matching square brackets and text within it [*]
+        strCleaned = re.sub("[\[].*?[\]]", "",  articleText)
 
-ofile = r'QarzHaiJaanPar.txt'
-with open(ofile, 'w', encoding='utf-8') as f:
-    f.write(str1)
+        ofile = BASE / 'AlFarooq.txt'
+        with open(ofile, 'w', encoding='utf-8') as f:
+            f.write(strCleaned)
+    else:
+        print(article_rows)
+        
+except Exception as e:
+    print(e)
