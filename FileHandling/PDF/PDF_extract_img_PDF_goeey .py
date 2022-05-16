@@ -1,7 +1,7 @@
 from PyPDF2 import PdfFileReader,PdfFileWriter
 import os
 from pathlib import Path    
-
+from gooey import Gooey, GooeyParser
 
 # tkroot = Tk()  # Initializing Tkinter
 # outDir = filedialog.askdirectory(parent=tkroot, initialdir="/", title='Please select a directory')
