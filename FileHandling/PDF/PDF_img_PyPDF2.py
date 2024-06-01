@@ -45,9 +45,9 @@ def extractPages():
     
     numofPages = len(pdf_reader.pages)
 
-    # for page in range(1, numofPages):
-    #     output_filename = f'{pdfName}_pg{page}.pdf'
-    #     writePDF(workingDir, pdf_reader, page, output_filename)
+    for page in range(1, numofPages):
+        output_filename = f'{pdfName}_pg{page}.pdf'
+        writePDF(workingDir, pdf_reader, page, output_filename)
 
 
     # while pgStart <= pgEnd:
